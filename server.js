@@ -6,13 +6,8 @@ const path = require('path');
 const app = express();
 
 const upload = multer ({
-  dest: function (req, file, cb) {
-    cb(null, 'public/')
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname)
-  } 
-})
+  dest: 'uploads/'
+});
 
 app.engine('.hbs', hbs());
 app.set('view engine', 'hbs');
@@ -47,10 +42,9 @@ app.get('/history', (req, res) => {
 app.post('/contact/send-message', upload.single('uploadFile'), (req, res) => {
 
   const {author, sender, title, message } = req.body;
-  const uploadFile = req.file;
   
-  if(author && sender && title && uploadFile && message) {
-    res.render('contact', { isSent: true, name: uploadFile.originalname});
+  if(author && sender && title && req.file && message) {
+    res.render('contact', { name: req.file.originalname, isSent: true });
   } else {
     res.render('contact', { isError: true });
   }
